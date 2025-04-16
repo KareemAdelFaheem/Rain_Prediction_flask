@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import joblib
 import numpy as np
 import pandas as pd
@@ -12,9 +12,9 @@ import time
 import threading
 
 app = Flask(__name__)
+
 model=joblib.load(open('xgb_model.pkl','rb'))
 
-# mice_imputer = joblib.load('mice_imputer.pkl')
 
 with open('encoders.pkl', 'rb') as f:
     lencoders = pickle.load(f)
@@ -34,7 +34,7 @@ def preprocessing(input_data):
     return final_data
 
 base_url = "https://api.open-meteo.com/v1/forecast"
-params = {"latitude":"30.04442","longitude":"31.23571","daily":"sunset,sunrise","hourly":"evapotranspiration","current":"cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,rain","timezone":"Africa/Cairo","forecast_days":"1"}
+params = {"latitude":"30.04442","longitude":"31.23571","daily":"sunset,sunrise,sunshine_duration","hourly":"evapotranspiration,rain,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover","current":"cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,rain,precipitation","timezone":"Africa/Cairo","forecast_days":"1"}
 
 def get_weather():
 
@@ -51,7 +51,7 @@ def get_weather():
 
 
 
-@app.route('/predict',methods=['GET','POST'])
+@app.route('/',methods=['GET','POST'])
 def predict():
     # input_data = pd.DataFrame([["Albury", 14.0, 18.0, 10.2, 5.0, 1.2, "S", 37, "SE", "S", 7, 15, 95,
     #                             80, 1005.2, 1003.8, 7, 8, 15.5, 17.2, 1]],
@@ -67,7 +67,7 @@ def predict():
     #                                    "WindGustDir", "WindGustSpeed", "WindDir9am", "WindDir3pm", "WindSpeed9am",
     #                                    "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
     #                                    "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"])
-
+    #
     # input_data = pd.DataFrame([["Albury", 18.0, 25.5, 0.0, 4.2, 9.0, "E", 15, "NNE", "NE", 4, 7, 45,
     #                             35, 1015.0, 1013.5, 4, 5, 20.0, 23.0, 0]],
     #                           columns=["Location", "MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine",
@@ -75,97 +75,153 @@ def predict():
     #                                    "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
     #                                    "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"])
 
-    input_data = pd.DataFrame([["Albury", 12.5, 18.0, 2.5, 3.0, 5.0, "NE", 20, "E", "ENE", 8, 12, 72,
-                                80, 1010.5, 1008.9, 6, 7, 15.0, 16.5, 1]],
-                              columns=["Location", "MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine",
-                                       "WindGustDir", "WindGustSpeed", "WindDir9am", "WindDir3pm", "WindSpeed9am",
-                                       "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
-                                       "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"])
+    # input_data = pd.DataFrame([["Albury", 12.5, 18.0, 2.5, 3.0, 5.0, "NE", 20, "E", "ENE", 8, 12, 72,
+    #                             80, 1010.5, 1008.9, 6, 7, 15.0, 16.5, 1]],
+    #                           columns=["Location", "MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine",
+    #                                    "WindGustDir", "WindGustSpeed", "WindDir9am", "WindDir3pm", "WindSpeed9am",
+    #                                    "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
+    #                                    "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"])
 
-    # Encode the data
-    # encoded = encode_data(input_data)
-    # imputed_data = mice_imputer.transform(encoded)
-    # final_data= scaler.transform(encoded)
 
-    # returned_value=get_temp()
-    final_data=preprocessing(input_data)
-    final_data_json = final_data.tolist() if isinstance(final_data, np.ndarray) else final_data.to_json(
-        orient='records')
-    prediction= model.predict(final_data)
-    return jsonify({
-        "status": "success",
-        "final_data": final_data_json,
-        "prediction": float(prediction[0])
-    })
+    try:
+        # for getting json from ESP32
+        # try:
+        #     response_data = request.get_json()
+        #     mintemp = response_data.get('mintemp')
+        #     maxtemp = response_data.get('maxtemp')
+        #     hum9am = response_data.get('hum9am')
+        #     hum3pm = response_data.get('hum3pm')
+        #     pressure9am = response_data.get('pressure9am')
+        #     pressure3pm = response_data.get('pressure3pm')
+        #     temp9am = response_data.get('temp9am')
+        #     temp3pm = response_data.get('temp3pm')
+        #     raintoday = response_data.get('raintoday')
+        #
+        #
+        # except Exception as e:
+        #     return "exception from ESP32 is %s"%e
+        #
 
-    # weather_data = get_weather()
-    # print(weather_data["current"]["cloud_cover"])
-    return "prediction result %s "% prediction
+        # for getting data from params
+        # mintemp = request.args.get('mintemp', type=float)
+        # maxtemp = request.args.get('maxtemp', type=float)
+        # hum9am = request.args.get('hum9am', type=float)
+        # hum3pm = request.args.get('hum3pm', type=float)
+        # pressure9am = request.args.get('pressure9am', type=float)
+        # pressure3pm = request.args.get('pressure3pm', type=float)
+        # temp9am = request.args.get('temp9am', type=float)
+        # temp3pm = request.args.get('temp3pm', type=float)
+        # raintoday = request.args.get('raintoday', type=int)
+
+        # for 1 prediction result
+        mintemp = 12.5
+        maxtemp = 18
+        hum9am =72
+        hum3pm = 80
+        pressure9am = 1010.5
+        pressure3pm = 1008.9
+        temp9am = 15
+        temp3pm = 16.5
+        raintoday = 1
+
+
+
+        # #for getting data values from API
+        # weather = get_weather()
+        # Rainfall= weather["current"]["rain"]
+        # Evaporation= weather["hourly"]["evapotranspiration"][21]
+        # Sunshine= weather["daily"]["sunshine_duration"][0]
+        # WindGustDir= weather["current"]["wind_gusts_10m"]
+        # WindGustSpeed= weather["current"]["wind_speed_10m"]
+        # WindDir9am= weather["hourly"]["wind_direction_10m"][21]
+        # WindDir3pm= weather["hourly"]["wind_direction_10m"][15]
+        # WindSpeed9am= weather["hourly"]["wind_speed_10m"][21]
+        # WindSpeed3pm= weather["hourly"]["wind_speed_10m"][15]
+        # Cloud9am= weather["hourly"]["cloud_cover"][21]
+        # Cloud3pm= weather["hourly"]["cloud_cover"][15]
+        # currentCloud= weather["current"]["cloud_cover"]
+
+        #for 1 prediction result
+        Rainfall = 2.5
+        Evaporation = 3
+        Sunshine = 5
+        WindGustDir = "NE"
+        WindGustSpeed = 20
+        WindDir9am = "E"
+        WindDir3pm = "ENE"
+        WindSpeed9am = 8
+        WindSpeed3pm = 12
+        Cloud9am = 6
+        Cloud3pm = 7
+        # currentCloud = weather["current"]["cloud_cover"]
+
+        columns = ["Location", "MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine",
+                   "WindGustDir", "WindGustSpeed", "WindDir9am", "WindDir3pm", "WindSpeed9am",
+                   "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
+                   "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"]
+        input_data = pd.DataFrame([[
+            "Albury",
+            mintemp,
+            maxtemp,
+            Rainfall,
+            Evaporation,
+            Sunshine,
+            WindGustDir,
+            WindGustSpeed,
+            WindDir9am,
+            WindDir3pm,
+            WindSpeed9am,
+            WindSpeed3pm,
+            hum9am,
+            hum3pm,
+            pressure9am,
+            pressure3pm,
+            Cloud9am,
+            Cloud3pm,
+            temp9am,
+            temp3pm,
+            raintoday
+
+        ]], columns=columns)
+
+
+
+        final_data = preprocessing(input_data)
+        final_data_json = final_data.tolist()
+        prediction = model.predict(final_data)
+
+
+        return jsonify({
+            "status": "success",
+            "final_data": final_data_json,
+            "prediction": float(prediction[0]),
+            "weather values": {
+                "mintemp":mintemp,
+                "maxtemp":maxtemp ,
+                "hum9am":hum9am,
+                "hum3pm":hum3pm,
+                "pressure9am":pressure9am,
+                "pressure3pm":pressure3pm,
+                "temp9am":temp9am,
+                "temp3pm":temp3pm,
+                "raintoday":raintoday,
+                "Rainfall": Rainfall,
+                "Evaporation":Evaporation,
+                "Sunshine":Sunshine,
+                "WindGustDir":WindGustDir ,
+                "WindGustSpeed":WindGustSpeed ,
+                "WindDir9am":WindDir9am ,
+                "WindDir3pm":WindDir3pm ,
+                "WindSpeed9am": WindSpeed9am,
+                "WindSpeed3pm":WindSpeed3pm ,
+                "Cloud9am":Cloud9am,
+                "Cloud3pm":Cloud3pm ,
+
+            }
+        })
+    except Exception as e:
+        return jsonify({"status":"error","message":f"{e}"})
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-# def get_temp():
-#     # Simulating WiFi scan (This part will vary depending on the platform)
-#     # For example, using a library to scan WiFi networks (like wifi or pywifi)
-#     networks_found = scan_wifi_networks()
-#
-#     if networks_found == 0:
-#         print("No networks found.")
-#         return
-#
-#     # Prepare JSON payload
-#     wifi_access_points = []
-#     for i in range(min(networks_found, 3)):  # Only process up to 3 networks
-#         network = {
-#             "macAddress": get_bssid(i),  # You'd need to implement get_bssid()
-#             "signalStrength": get_rssi(i)  # You'd need to implement get_rssi()
-#         }
-#         wifi_access_points.append(network)
-#
-#     # Create JSON payload
-#     payload = {
-#         "wifiAccessPoints": wifi_access_points
-    # }
-    #
-    # # Convert to JSON string
-    # json_payload = json.dumps(payload)
-    #
-    # # Send HTTP POST request to OpenWeatherMap API
-    # # url = "http://api.openweathermap.org/geo/1.0/direct?q=London&limit=5&appid=f91cb1579a0d0ea623150046a5d9e10c"
-    #
-    # # headers = {"Content-Type": "application/json"}
-    #
-    # try:
-    #     # response = requests.get(url, headers=headers, data=json_payload)
-    #     # response = requests.get(f'https://api.openweathermap.org/data/2.5/weather?lat=30.0443879&lon=31.2357257&appid=d10dd0ebe1faa44c412c735463f8c225')
-    #     response = requests.get(f'https://api.open-meteo.com/v1/forecast?latitude=30.04442&longitude=31.23571&hourly=cloud_cover,evapotranspiration,wind_speed_10m,wind_speed_80m,wind_direction_10m,wind_speed_120m,wind_speed_180m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,precipitation,rain&forecast_days=1')
-    #     #
-        # if response.status_code == 200:
-        #     data = response.json()
-        #     # print(response.status_code)
-        #     print("wind speed is",data["hourly"]["wind_speed_10m"][21])
-        #     print("clouds are",data["hourly"]["cloud_cover"][21])
-        #
-        #     return "well"
-        # else:
-        #     print(f"Request failed with status code {response.status_code}")
-#             return "error"
-#
-#     except Exception as e:
-#         print(f"Exception occurred: {e}")
-#
-# def scan_wifi_networks():
-#     # Implement WiFi scanning logic using platform-specific libraries.
-#     # Return the number of networks found.
-#     return 3  # Example placeholder, modify according to actual scanning method
-#
-# def get_bssid(index):
-#     # Return BSSID for a given index (stub function for illustration)
-#     return "00:14:22:01:23:45"
-#
-# def get_rssi(index):
-#     # Return RSSI for a given index (stub function for illustration)
-#     return -50  # Example RSSI value
-
