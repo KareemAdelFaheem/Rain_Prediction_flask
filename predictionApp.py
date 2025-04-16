@@ -12,7 +12,7 @@ import time
 import threading
 
 app = Flask(__name__)
-# model=joblib.load(open('xgb_model.pkl','rb'))
+model=joblib.load(open('xgb_model.pkl','rb'))
 
 # mice_imputer = joblib.load('mice_imputer.pkl')
 
