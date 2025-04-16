@@ -91,12 +91,13 @@ def predict():
     final_data=preprocessing(input_data)
     final_data_json = final_data.tolist() if isinstance(final_data, np.ndarray) else final_data.to_json(
         orient='records')
-
+    prediction= model.predict(final_data)
     return jsonify({
         "status": "success",
-        "final_data": final_data_json
+        "final_data": final_data_json,
+        "prediction": prediction
     })
-    # prediction= model.predict(final_data)
+
     # weather_data = get_weather()
     # print(weather_data["current"]["cloud_cover"])
     # return "weather result %s "% weather_data["current"]["cloud_cover"]
