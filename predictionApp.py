@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 import joblib
 import numpy as np
 import pandas as pd
@@ -16,22 +16,22 @@ app = Flask(__name__)
 
 # mice_imputer = joblib.load('mice_imputer.pkl')
 
-# with open('encoders.pkl', 'rb') as f:
-#     lencoders = pickle.load(f)
+with open('encoders.pkl', 'rb') as f:
+    lencoders = pickle.load(f)
 
-# scaler = joblib.load('scaler.pkl')
+scaler = joblib.load('scaler.pkl')
 
-# def encode_data(data):
-#     for col in data.select_dtypes(include=['object']).columns:
-#         if col in lencoders:
-#             # Apply the encoder to the new data
-#             data[col] = lencoders[col].transform(data[col])
-#     return data
+def encode_data(data):
+    for col in data.select_dtypes(include=['object']).columns:
+        if col in lencoders:
+            # Apply the encoder to the new data
+            data[col] = lencoders[col].transform(data[col])
+    return data
 
-# def preprocessing(input_data):
-#     encoded = encode_data(input_data)
-#     final_data = scaler.transform(encoded)
-#     return final_data
+def preprocessing(input_data):
+    encoded = encode_data(input_data)
+    final_data = scaler.transform(encoded)
+    return final_data
 
 base_url = "https://api.open-meteo.com/v1/forecast"
 params = {"latitude":"30.04442","longitude":"31.23571","daily":"sunset,sunrise","hourly":"evapotranspiration","current":"cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,rain","timezone":"Africa/Cairo","forecast_days":"1"}
@@ -88,7 +88,14 @@ def predict():
     # final_data= scaler.transform(encoded)
 
     # returned_value=get_temp()
-    # final_data=preprocessing(input_data)
+    final_data=preprocessing(input_data)
+    # final_data_json = final_data.tolist() if isinstance(final_data, np.ndarray) else final_data.to_json(
+    #     orient='records')
+    #
+    # return jsonify({
+    #     "status": "success",
+    #     "final_data": final_data_json
+    # })
     # prediction= model.predict(final_data)
     weather_data = get_weather()
     print(weather_data["current"]["cloud_cover"])
