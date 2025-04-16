@@ -68,19 +68,19 @@ def predict():
     #                                    "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
     #                                    "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"])
 
-    input_data = pd.DataFrame([["Albury", 18.0, 25.5, 0.0, 4.2, 9.0, "E", 15, "NNE", "NE", 4, 7, 45,
-                                35, 1015.0, 1013.5, 4, 5, 20.0, 23.0, 0]],
-                              columns=["Location", "MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine",
-                                       "WindGustDir", "WindGustSpeed", "WindDir9am", "WindDir3pm", "WindSpeed9am",
-                                       "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
-                                       "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"])
-
-    # input_data = pd.DataFrame([["Albury", 12.5, 18.0, 2.5, 3.0, 5.0, "NE", 20, "E", "ENE", 8, 12, 72,
-    #                             80, 1010.5, 1008.9, 6, 7, 15.0, 16.5, 1]],
+    # input_data = pd.DataFrame([["Albury", 18.0, 25.5, 0.0, 4.2, 9.0, "E", 15, "NNE", "NE", 4, 7, 45,
+    #                             35, 1015.0, 1013.5, 4, 5, 20.0, 23.0, 0]],
     #                           columns=["Location", "MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine",
     #                                    "WindGustDir", "WindGustSpeed", "WindDir9am", "WindDir3pm", "WindSpeed9am",
     #                                    "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
     #                                    "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"])
+
+    input_data = pd.DataFrame([["Albury", 12.5, 18.0, 2.5, 3.0, 5.0, "NE", 20, "E", "ENE", 8, 12, 72,
+                                80, 1010.5, 1008.9, 6, 7, 15.0, 16.5, 1]],
+                              columns=["Location", "MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine",
+                                       "WindGustDir", "WindGustSpeed", "WindDir9am", "WindDir3pm", "WindSpeed9am",
+                                       "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm",
+                                       "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm", "RainToday"])
 
     # Encode the data
     # encoded = encode_data(input_data)
