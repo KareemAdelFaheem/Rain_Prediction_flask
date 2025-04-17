@@ -127,32 +127,32 @@ def predict():
 
 
         # #for getting data values from API
-        weather = get_weather()
-        Rainfall= weather["current"]["rain"]
-        Evaporation= weather["hourly"]["evapotranspiration"][21]
-        Sunshine= weather["daily"]["sunshine_duration"][0]
-        WindGustDir= weather["current"]["wind_gusts_10m"]
-        WindGustSpeed= weather["current"]["wind_speed_10m"]
-        WindDir9am= weather["hourly"]["wind_direction_10m"][21]
-        WindDir3pm= weather["hourly"]["wind_direction_10m"][15]
-        WindSpeed9am= weather["hourly"]["wind_speed_10m"][21]
-        WindSpeed3pm= weather["hourly"]["wind_speed_10m"][15]
-        Cloud9am= weather["hourly"]["cloud_cover"][21]
-        Cloud3pm= weather["hourly"]["cloud_cover"][15]
-        currentCloud= weather["current"]["cloud_cover"]
+        # weather = get_weather()
+        # Rainfall= weather["current"]["rain"]
+        # Evaporation= weather["hourly"]["evapotranspiration"][21]
+        # Sunshine= weather["daily"]["sunshine_duration"][0]
+        # WindGustDir= weather["current"]["wind_gusts_10m"]
+        # WindGustSpeed= weather["current"]["wind_speed_10m"]
+        # WindDir9am= weather["hourly"]["wind_direction_10m"][21]
+        # WindDir3pm= weather["hourly"]["wind_direction_10m"][15]
+        # WindSpeed9am= weather["hourly"]["wind_speed_10m"][21]
+        # WindSpeed3pm= weather["hourly"]["wind_speed_10m"][15]
+        # Cloud9am= weather["hourly"]["cloud_cover"][21]
+        # Cloud3pm= weather["hourly"]["cloud_cover"][15]
+        # currentCloud= weather["current"]["cloud_cover"]
 
         #for 1 prediction result
-        # Rainfall = 2.5
-        # Evaporation = 3
-        # Sunshine = 5
-        # WindGustDir = "NE"
-        # WindGustSpeed = 20
-        # WindDir9am = "E"
-        # WindDir3pm = "ENE"
-        # WindSpeed9am = 8
-        # WindSpeed3pm = 12
-        # Cloud9am = 6
-        # Cloud3pm = 7
+        Rainfall = 2.5
+        Evaporation = 3
+        Sunshine = 5
+        WindGustDir = "NE"
+        WindGustSpeed = 20
+        WindDir9am = "E"
+        WindDir3pm = "ENE"
+        WindSpeed9am = 8
+        WindSpeed3pm = 12
+        Cloud9am = 6
+        Cloud3pm = 7
         # currentCloud = weather["current"]["cloud_cover"]
 
         columns = ["Location", "MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine",
